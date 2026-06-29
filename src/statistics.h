@@ -17,10 +17,17 @@ typedef struct {
     double cost;                  /**< Operational cost (WATER_COST_PER_M3 × total m³) */
     double profit;                /**< revenue − cost */
     double income_tax;            /**< 25 % of profit (zero if profit ≤ 0) */
-    double max_domestic_bill;     /**< Highest domestic bill seen this quarter */
-    double avg_domestic_bill;     /**< Mean domestic bill this quarter */
+
+    /* ── Domestic ── */
     int    domestic_count;        /**< Number of domestic customers billed */
     double domestic_revenue;      /**< Revenue from domestic customers only */
+    double max_domestic_bill;     /**< Highest domestic bill seen this quarter */
+    double avg_domestic_bill;     /**< Mean domestic bill this quarter */
+
+    /* ── Commercial ── */
+    int    commercial_count;      /**< Number of commercial customers billed */
+    double commercial_revenue;    /**< Revenue from commercial customers only (excl. VAT) */
+    double max_commercial_bill;   /**< Highest commercial bill seen this quarter (excl. VAT) */
 } Statistics;
 
 /** @brief Initialise all fields to zero. */

@@ -283,6 +283,44 @@ static void suite_stats_loss(void)
 }
 
 /* ══════════════════════════════════════════════════════════════
+   Suite: statistics – commercial customer tracking
+   After one domestic (12 m³) and two commercial bills (0 m³, 100 m³):
+     commercial_count            = 2
+     max_commercial_bill         = 608.30  (the 100 m³ bill)
+     commercial_revenue          = 168.30 + 608.30 = 776.60
+     domestic_count              = 1  (unchanged)
+   ══════════════════════════════════════════════════════════════ */
+static void suite_stats_commercial(void)
+{
+    Statistics s;
+    stats_init(&s);
+
+    ASSERT_INT_EQ(0, s.commercial_count);
+    ASSERT_DBL_NEAR(0.0, s.commercial_revenue,  TOL);
+    ASSERT_DBL_NEAR(0.0, s.max_commercial_bill, TOL);
+
+    /* Domestic baseline – must not affect commercial counters */
+    Bill d1 = make_bill(CUSTOMER_DOMESTIC, 12);
+    stats_update(&s, &d1);
+    ASSERT_INT_EQ(0, s.commercial_count);
+
+    /* Commercial 0 m³: total_charge = 168.30 */
+    Bill c1 = make_bill(CUSTOMER_COMMERCIAL, 0);
+    stats_update(&s, &c1);
+    ASSERT_INT_EQ(1, s.commercial_count);
+    ASSERT_DBL_NEAR(168.30, s.commercial_revenue,  TOL);
+    ASSERT_DBL_NEAR(168.30, s.max_commercial_bill, TOL);
+    ASSERT_INT_EQ(1, s.domestic_count); /* domestic count unchanged */
+
+    /* Commercial 100 m³: total_charge = 608.30 */
+    Bill c2 = make_bill(CUSTOMER_COMMERCIAL, 100);
+    stats_update(&s, &c2);
+    ASSERT_INT_EQ(2, s.commercial_count);
+    ASSERT_DBL_NEAR(776.60, s.commercial_revenue,  TOL); /* 168.30 + 608.30 */
+    ASSERT_DBL_NEAR(608.30, s.max_commercial_bill, TOL);
+}
+
+/* ══════════════════════════════════════════════════════════════
    main: run all suites
    ══════════════════════════════════════════════════════════════ */
 int main(void)
@@ -301,6 +339,7 @@ int main(void)
     RUN_SUITE(suite_stats_init);
     RUN_SUITE(suite_stats_aggregation);
     RUN_SUITE(suite_stats_loss);
+    RUN_SUITE(suite_stats_commercial);
 
     TEST_REPORT();
     TEST_MAIN_RETURN();

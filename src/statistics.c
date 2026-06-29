@@ -25,6 +25,11 @@ void stats_update(Statistics *s, const Bill *bill)
         if (bill->total_charge > s->max_domestic_bill)
             s->max_domestic_bill = bill->total_charge;
         s->avg_domestic_bill = s->domestic_revenue / s->domestic_count;
+    } else if (bill->type == CUSTOMER_COMMERCIAL) {
+        s->commercial_revenue += bill->total_charge;
+        s->commercial_count++;
+        if (bill->total_charge > s->max_commercial_bill)
+            s->max_commercial_bill = bill->total_charge;
     }
 
     s->revenue   += bill->total_charge;
@@ -36,8 +41,15 @@ void stats_update(Statistics *s, const Bill *bill)
 void stats_display(const Statistics *s)
 {
     if (s == NULL) return;
+    printf("------------------------------------------\n");
+    printf("Quarterly Statistics\n");
+    printf("------------------------------------------\n");
     printf("Total Fresh Water Supplied:              %.2f m3\n",  s->total_fresh_water);
     printf("Total Fresh Water to Domestic Customers: %.2f m3\n",  s->total_domestic_water);
+    printf("------------------------------------------\n");
+    printf("Customers Billed:    Domestic %-4d  Commercial %-4d\n",
+           s->domestic_count, s->commercial_count);
+    printf("------------------------------------------\n");
     printf("Total Revenue:                           %.2f GBP\n", s->revenue);
     printf("Total Cost:                              %.2f GBP\n", s->cost);
     if (s->profit >= 0.0)
@@ -45,6 +57,13 @@ void stats_display(const Statistics *s)
     else
         printf("Loss:                                    %.2f GBP\n", -s->profit);
     printf("Income Tax:                              %.2f GBP\n", s->income_tax);
-    printf("Maximum Domestic Bill:                   %.2f GBP\n", s->max_domestic_bill);
-    printf("Average Domestic Bill:                   %.2f GBP\n", s->avg_domestic_bill);
+    printf("------------------------------------------\n");
+    if (s->domestic_count > 0) {
+        printf("Maximum Domestic Bill:                   %.2f GBP\n", s->max_domestic_bill);
+        printf("Average Domestic Bill:                   %.2f GBP\n", s->avg_domestic_bill);
+    }
+    if (s->commercial_count > 0) {
+        printf("Maximum Commercial Bill (excl. VAT):     %.2f GBP\n", s->max_commercial_bill);
+    }
+    printf("------------------------------------------\n");
 }

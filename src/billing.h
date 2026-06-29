@@ -22,15 +22,18 @@
 #define DOM_TIER4_MAX    40
 #define DOM_TIER5_RATE   2.50
 
+/* ── Waste water billing fraction ────────────────────────────────────────── */
+#define WASTE_WATER_FRACTION   0.95   /**< Fraction of consumption billed as waste water */
+
 /* ── Domestic fixed charges ───────────────────────────────────────────────── */
-#define DOM_WASTE_RATE         0.25   /**< GBP per m³ (applied to 95 % of consumption) */
+#define DOM_WASTE_RATE         0.25   /**< GBP per m³ (applied to WASTE_WATER_FRACTION of consumption) */
 #define DOM_SURFACE_CHARGE    10.00   /**< GBP per quarter */
 #define DOM_STANDING_RATE      0.10   /**< GBP per day */
 #define DOM_VAT_RATE           0.00   /**< Domestic customers are VAT-exempt */
 
 /* ── Commercial pricing ───────────────────────────────────────────────────── */
 #define COM_FRESH_RATE         2.50   /**< GBP per m³ */
-#define COM_WASTE_RATE         2.00   /**< GBP per m³ (applied to 95 % of consumption) */
+#define COM_WASTE_RATE         2.00   /**< GBP per m³ (applied to WASTE_WATER_FRACTION of consumption) */
 #define COM_SURFACE_CHARGE    50.00   /**< GBP per quarter */
 #define COM_STANDING_RATE      1.30   /**< GBP per day */
 #define COM_VAT_RATE           0.20   /**< 20 % VAT */

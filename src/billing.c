@@ -52,7 +52,7 @@ int compute_bill(CustomerType type, int consumption, Bill *out)
     switch (type) {
     case CUSTOMER_DOMESTIC:
         out->fresh_water_charge   = domestic_fresh_water_charge(consumption);
-        out->waste_water_charge   = consumption * 0.95 * DOM_WASTE_RATE;
+        out->waste_water_charge   = consumption * WASTE_WATER_FRACTION * DOM_WASTE_RATE;
         out->surface_water_charge = DOM_SURFACE_CHARGE;
         out->standing_charge      = DOM_STANDING_RATE * DAYS_PER_QUARTER;
         out->total_charge         = out->fresh_water_charge
@@ -65,7 +65,7 @@ int compute_bill(CustomerType type, int consumption, Bill *out)
 
     case CUSTOMER_COMMERCIAL:
         out->fresh_water_charge   = consumption * COM_FRESH_RATE;
-        out->waste_water_charge   = consumption * 0.95 * COM_WASTE_RATE;
+        out->waste_water_charge   = consumption * WASTE_WATER_FRACTION * COM_WASTE_RATE;
         out->surface_water_charge = COM_SURFACE_CHARGE;
         out->standing_charge      = COM_STANDING_RATE * DAYS_PER_QUARTER;
         out->total_charge         = out->fresh_water_charge
@@ -95,7 +95,8 @@ void print_bill(const Bill *bill)
     printf("Surface Water Charge: %.2f GBP\n", bill->surface_water_charge);
     printf("Standing Charge:      %.2f GBP\n", bill->standing_charge);
     printf("Total Charge:         %.2f GBP\n", bill->total_charge);
-    printf("VAT:                  %.2f GBP\n", bill->vat);
+    if (bill->vat > 0.0)
+        printf("VAT:                  %.2f GBP\n", bill->vat);
     printf("Amount to Pay:        %.2f GBP\n", bill->amount_to_pay);
     printf("------------------------------------------\n");
 }
