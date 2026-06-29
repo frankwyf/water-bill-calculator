@@ -1,0 +1,14 @@
+build/
+*.o
+*.d
+*.exe
+*.out
+*.dSYM/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
