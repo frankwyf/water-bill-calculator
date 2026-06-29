@@ -1,0 +1,64 @@
+name: Bug Report
+description: Report incorrect behaviour or a build failure
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug!
+        Please fill in the details below so we can reproduce and fix the issue.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `water_bill --version`, or commit SHA
+      placeholder: "1.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Linux
+        - macOS
+        - Windows (MSYS2 / MinGW)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: compiler
+    attributes:
+      label: Compiler & version
+      placeholder: "gcc 13.2.0"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly. Include the exact command you ran and what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps to trigger the issue.
+      value: |
+        1. Build with `make`
+        2. Run `./build/water_bill`
+        3. Enter …
+        4. See error …
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output / logs
+      render: text

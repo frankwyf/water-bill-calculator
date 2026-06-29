@@ -1,0 +1,44 @@
+name: Feature Request
+description: Suggest an enhancement or new feature
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We appreciate feature ideas! Please describe the use case clearly so
+        we can evaluate whether it fits the project scope.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What problem does this solve? Is it related to an existing pain point?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe how you'd like this to work. Include CLI syntax, output format, or API changes if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you considered other approaches? What are their trade-offs?
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected area
+      options:
+        - Billing calculation
+        - Statistics / reporting
+        - CLI / user interface
+        - Build system / CI
+        - Documentation
+        - Other
