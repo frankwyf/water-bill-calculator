@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
+
+      - name: Build & test
+        run: |
+          make CC=gcc
+          make test CC=gcc
+
+      - name: Create source tarball
+        run: |
+          TAG=${GITHUB_REF_NAME}
+          mkdir -p dist
+          tar -czf dist/water-bill-calculator-${TAG}.tar.gz \
+            src/ tests/ Makefile README.md LICENSE CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.tar.gz
+          generate_release_notes: true
+          body: |
+            ## Water Bill Calculator ${{ github.ref_name }}
+
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+
+            ### Quick start
+            ```bash
+            tar xzf water-bill-calculator-${{ github.ref_name }}.tar.gz
+            make
+            ./build/water_bill
+            ```
