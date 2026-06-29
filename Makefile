@@ -30,7 +30,7 @@ SRCS        = $(SRCDIR)/billing.c $(SRCDIR)/statistics.c
 TARGET      = $(BUILDDIR)/water_bill
 TEST_TARGET = $(BUILDDIR)/test_runner
 
-.PHONY: all test debug install uninstall clean help
+.PHONY: all test debug format install uninstall clean help
 
 # ── Default ────────────────────────────────────────────────────────────────
 all: $(BUILDDIR) $(TARGET)
@@ -54,6 +54,10 @@ test: $(TEST_TARGET)
 debug: CFLAGS += -g -O0 -fsanitize=address,undefined -fno-omit-frame-pointer
 debug: all
 
+# ── Format (requires clang-format) ────────────────────────────────────────
+format:
+	clang-format -i $(SRCDIR)/*.c $(SRCDIR)/*.h $(TESTDIR)/*.c $(TESTDIR)/*.h
+
 # ── Install / uninstall ────────────────────────────────────────────────────
 install: $(TARGET)
 	install -d $(BINDIR)
@@ -74,6 +78,7 @@ help:
 	@echo "  make              Build ./$(TARGET)"
 	@echo "  make test         Build and run the test suite"
 	@echo "  make debug        Build with AddressSanitizer + UBSan"
+	@echo "  make format       Run clang-format on all source files"
 	@echo "  make install      Install to \$$PREFIX/bin (default: /usr/local)"
 	@echo "  make uninstall    Remove installed binary"
 	@echo "  make clean        Remove $(BUILDDIR)/"

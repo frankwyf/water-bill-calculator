@@ -41,7 +41,7 @@ make
 make test
 ```
 
-All 87 tests must pass before submitting. Add new tests for any new functionality.
+All tests must pass before submitting (`make test`). Add new tests for any new functionality.
 
 ### 5. Commit
 
