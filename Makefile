@@ -1,39 +1,85 @@
 # ==============================================================
 # Makefile — Water Bill Calculator
-# Targets: all, test, clean
-# Usage:
-#   make            → build the main executable
-#   make test       → build and run all tests
-#   make clean      → remove build artefacts
-# Override compiler: make CC=clang
+#
+# Common targets:
+#   make              Build the main executable (default)
+#   make test         Build and run the full test suite
+#   make debug        Build with AddressSanitizer + UBSan
+#   make install      Install to $(PREFIX)/bin  (default: /usr/local)
+#   make uninstall    Remove installed binary
+#   make clean        Remove build artefacts
+#   make help         Print this message
+#
+# Variables you can override on the command line:
+#   CC=clang          Compiler (default: gcc)
+#   PREFIX=/opt       Install prefix (default: /usr/local)
+#   DESTDIR=          Stage root for package builders
 # ==============================================================
 
 CC      ?= gcc
 CFLAGS   = -Wall -Wextra -Wpedantic -std=c11
 
-SRCDIR   = src
-TESTDIR  = tests
-BINDIR   = build
+PREFIX  ?= /usr/local
+BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
+
+SRCDIR    = src
+TESTDIR   = tests
+BUILDDIR  = build
 
 SRCS        = $(SRCDIR)/billing.c $(SRCDIR)/statistics.c
-TARGET      = $(BINDIR)/water_bill
-TEST_TARGET = $(BINDIR)/test_runner
+TARGET      = $(BUILDDIR)/water_bill
+TEST_TARGET = $(BUILDDIR)/test_runner
 
-.PHONY: all test clean
+.PHONY: all test debug install uninstall clean help
 
-all: $(BINDIR) $(TARGET)
+# ── Default ────────────────────────────────────────────────────────────────
+all: $(BUILDDIR) $(TARGET)
 
-$(BINDIR):
-	mkdir -p $(BINDIR)
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
 
-$(TARGET): $(SRCDIR)/main.c $(SRCS) | $(BINDIR)
+$(TARGET): $(SRCDIR)/main.c $(SRCS) | $(BUILDDIR)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(TEST_TARGET): $(TESTDIR)/test_all.c $(SRCS) | $(BINDIR)
+# ── Tests ──────────────────────────────────────────────────────────────────
+$(TEST_TARGET): $(TESTDIR)/test_all.c $(SRCS) | $(BUILDDIR)
 	$(CC) $(CFLAGS) -I$(SRCDIR) -o $@ $^ -lm
 
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
 
+# ── Debug / sanitizers ─────────────────────────────────────────────────────
+# Builds the executable with AddressSanitizer and UBSan enabled.
+# Requires gcc >= 4.8 or clang >= 3.1.
+debug: CFLAGS += -g -O0 -fsanitize=address,undefined -fno-omit-frame-pointer
+debug: all
+
+# ── Install / uninstall ────────────────────────────────────────────────────
+install: $(TARGET)
+	install -d $(BINDIR)
+	install -m 0755 $(TARGET) $(BINDIR)/water_bill
+
+uninstall:
+	rm -f $(BINDIR)/water_bill
+
+# ── Cleanup ────────────────────────────────────────────────────────────────
 clean:
-	rm -rf $(BINDIR)
+	rm -rf $(BUILDDIR)
+
+# ── Help ───────────────────────────────────────────────────────────────────
+help:
+	@echo ""
+	@echo "Water Bill Calculator — build targets"
+	@echo ""
+	@echo "  make              Build ./$(TARGET)"
+	@echo "  make test         Build and run the test suite"
+	@echo "  make debug        Build with AddressSanitizer + UBSan"
+	@echo "  make install      Install to \$$PREFIX/bin (default: /usr/local)"
+	@echo "  make uninstall    Remove installed binary"
+	@echo "  make clean        Remove $(BUILDDIR)/"
+	@echo ""
+	@echo "Override variables:"
+	@echo "  CC=clang          Use clang instead of gcc"
+	@echo "  PREFIX=/opt       Change install prefix"
+	@echo "  DESTDIR=/staging  Stage root for package builds"
+	@echo ""
