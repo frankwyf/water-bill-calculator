@@ -17,7 +17,9 @@ A command-line quarterly water-bill calculator for **domestic** and **commercial
 | Domestic billing | 5-tier progressive fresh-water tariff; VAT-exempt |
 | Commercial billing | Flat-rate fresh water + 20 % VAT |
 | Shared charges | Waste water, surface water, daily standing charge |
-| Quarterly statistics | Revenue, cost, profit, 25 % income tax, max/average domestic bill |
+| Quarterly statistics | Revenue, cost, profit, income tax, per-type customer counts and bills |
+| Batch / script mode | `--batch` reads `<type> <m3>` pairs from stdin — pipe-friendly |
+| CLI flags | `--help`, `--version`, `--batch` |
 | Input validation | Rejects negative consumption and invalid customer type |
 | Portable | C11, no external runtime dependencies |
 
@@ -39,10 +41,12 @@ make            # produces build/water_bill
 ### Run
 
 ```bash
-./build/water_bill
+./build/water_bill           # interactive menu
+./build/water_bill --help    # usage information
+./build/water_bill --version # version string
 ```
 
-Sample session:
+#### Interactive mode
 
 ```
 ===========================================
@@ -64,10 +68,21 @@ Waste Water Charge:   4.75 GBP
 Surface Water Charge: 10.00 GBP
 Standing Charge:      9.10 GBP
 Total Charge:         31.30 GBP
-VAT:                  0.00 GBP
 Amount to Pay:        31.30 GBP
 ------------------------------------------
 ```
+
+#### Batch mode (non-interactive)
+
+Read one `<type> <m3>` record per line from stdin. Useful for scripting,
+pipelines, and CI smoke tests.
+
+```bash
+printf '1 12\n2 100\n1 40' | ./build/water_bill --batch
+```
+
+All bills are printed, followed by a statistics summary. The exit code is
+non-zero if any record is invalid.
 
 ### Test
 
@@ -78,7 +93,7 @@ make test       # builds and runs the full test suite
 Expected output:
 
 ```
-Results: 87 passed / 0 failed / 87 total
+Results: 97 passed / 0 failed / 97 total
 ```
 
 ## Tariff Structure
@@ -108,19 +123,24 @@ Additional quarterly charges:
 - **Standing charge**: £1.30/day × 91 days = £118.30
 - **VAT**: 20 % applied to the total charge
 
+See [docs/tariff.md](docs/tariff.md) for the full tariff reference with worked examples.
+
 ## Project Structure
 
 ```
 water-bill-calculator/
 ├── src/
+│   ├── version.h        # Single source of truth for version string
 │   ├── billing.h        # Tariff constants, Bill struct, API
 │   ├── billing.c        # Bill computation
 │   ├── statistics.h     # Statistics struct, API
 │   ├── statistics.c     # Quarterly statistics aggregation
-│   └── main.c           # Interactive CLI entry point
+│   └── main.c           # CLI entry point (interactive + batch mode)
 ├── tests/
 │   ├── test_framework.h # Minimal zero-dependency test macros
-│   └── test_all.c       # Full test suite (87 assertions)
+│   └── test_all.c       # Full test suite (97 assertions)
+├── docs/
+│   └── tariff.md        # Tariff reference with worked examples
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml       # Build + test on Linux, macOS, Windows
