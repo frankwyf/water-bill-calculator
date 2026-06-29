@@ -1,0 +1,28 @@
+# Doxyfile — minimal configuration for water-bill-calculator
+# Generate docs with: doxygen Doxyfile
+# Output is placed in docs/api/ (git-ignored).
+
+PROJECT_NAME           = "Water Bill Calculator"
+PROJECT_NUMBER         = 1.1.0
+PROJECT_BRIEF          = "Quarterly water billing for domestic and commercial customers"
+
+INPUT                  = src/
+FILE_PATTERNS          = *.h *.c
+RECURSIVE              = NO
+
+OUTPUT_DIRECTORY       = docs/api
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+HTML_OUTPUT            = .
+
+EXTRACT_ALL            = NO
+EXTRACT_STATIC         = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+
+OPTIMIZE_OUTPUT_FOR_C  = YES
+TYPEDEF_HIDES_STRUCT   = YES
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES

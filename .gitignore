@@ -5,6 +5,9 @@ build/
 *.out
 *.dSYM/
 
+# Generated documentation
+docs/api/
+
 # Editor
 .vscode/settings.json
 .idea/
