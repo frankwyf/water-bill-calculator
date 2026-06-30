@@ -1,0 +1,81 @@
+.\" Man page for water_bill(1)
+.TH WATER_BILL 1 "2026-06-30" "1.1.0" "Water Bill Calculator"
+.SH NAME
+water_bill \- quarterly water bill calculator for domestic and commercial customers
+.SH SYNOPSIS
+.B water_bill
+.RI [ OPTION ]
+.SH DESCRIPTION
+.B water_bill
+is a command-line tool that computes quarterly water bills for domestic
+and commercial customers using a tiered tariff structure.
+.PP
+When run without options, it presents an interactive menu.
+.SH OPTIONS
+.TP
+.B \-\-batch
+Non-interactive mode.
+Read
+.I <type> <consumption>
+pairs from standard input, one per line.
+Lines beginning with \fB#\fR and blank lines are ignored.
+Prints each bill, then a quarterly statistics summary.
+Exits with non-zero status if any record is invalid.
+.TP
+.B \-\-version
+Print version information and exit.
+.TP
+.BR \-\-help ", " \-h
+Print a usage summary and exit.
+.SH INPUT FORMAT
+In batch mode, each input line contains two space-separated integers:
+.PP
+.RS 4
+.I type consumption
+.RE
+.PP
+where
+.I type
+is 1 (Domestic) or 2 (Commercial), and
+.I consumption
+is the water usage in cubic metres (m\[u00B3]), non-negative.
+.SH EXIT STATUS
+.TP
+.B 0
+Success (all records processed without error).
+.TP
+.B 1
+One or more records were invalid, or no records were read.
+.SH EXAMPLES
+Interactive mode:
+.PP
+.RS 4
+.B water_bill
+.RE
+.PP
+Batch mode from a file:
+.PP
+.RS 4
+.B water_bill \-\-batch < examples/typical_quarter.txt
+.RE
+.PP
+Piped input:
+.PP
+.RS 4
+.B printf \(aq1 20\\n2 100\\n\(aq | water_bill \-\-batch
+.RE
+.SH FILES
+.TP
+.I examples/typical_quarter.txt
+Sample batch input with domestic and commercial records.
+.TP
+.I examples/edge_cases.txt
+Edge-case inputs for testing tier boundaries.
+.SH SEE ALSO
+Project documentation:
+.UR https://github.com/frankwyf/water-bill-calculator
+.UE
+.SH AUTHORS
+Written by Frank Wang.
+.SH LICENSE
+MIT License.  See the LICENSE file in the source distribution.
