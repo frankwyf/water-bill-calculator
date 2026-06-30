@@ -29,7 +29,8 @@ static void print_usage(void)
     printf("Usage: %s [OPTION]\n\n", WBC_PROGNAME);
     printf("Options:\n");
     printf("  --batch     Non-interactive mode: read <type> <m3> pairs from stdin,\n");
-    printf("              one per line (1=Domestic, 2=Commercial). Prints all bills\n");
+    printf("              one per line (1=Domestic, 2=Commercial). Lines starting\n");
+    printf("              with '#' and blank lines are ignored. Prints all bills\n");
     printf("              and a statistics summary, then exits.\n");
     printf("  --version   Print version information and exit.\n");
     printf("  --help      Print this help message and exit.\n");
@@ -58,10 +59,25 @@ static int run_batch(void)
 
     int ctype, consumption;
     int line = 0;
+    int records = 0;
     int errors = 0;
+    char buf[256];
 
-    while (scanf("%d %d", &ctype, &consumption) == 2) {
+    while (fgets(buf, sizeof(buf), stdin) != NULL) {
         line++;
+        /* Skip blank lines and comments */
+        const char *p = buf;
+        while (*p == ' ' || *p == '\t') p++;
+        if (*p == '\n' || *p == '\0' || *p == '#')
+            continue;
+
+        if (sscanf(buf, "%d %d", &ctype, &consumption) != 2) {
+            fprintf(stderr, "line %d: expected '<type> <m3>' pair\n", line);
+            errors++;
+            continue;
+        }
+        records++;
+
         if (ctype != CUSTOMER_DOMESTIC && ctype != CUSTOMER_COMMERCIAL) {
             fprintf(stderr, "line %d: invalid customer type %d (use 1 or 2)\n",
                     line, ctype);
@@ -86,7 +102,7 @@ static int run_batch(void)
         stats_update(&stats, &bill);
     }
 
-    if (line == 0) {
+    if (records == 0) {
         fprintf(stderr, "%s --batch: no input records read from stdin\n",
                 WBC_PROGNAME);
         return EXIT_FAILURE;
