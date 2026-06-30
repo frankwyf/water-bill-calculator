@@ -1,0 +1,24 @@
+# Edge cases for testing boundary behaviour via batch mode
+# Format: <type> <consumption_m3>
+#
+# Usage: ./build/water_bill --batch < examples/edge_cases.txt
+
+# Zero consumption (both types)
+1 0
+2 0
+
+# Exact tier boundaries (domestic)
+1 5
+1 12
+1 25
+1 40
+
+# Just above each tier boundary
+1 6
+1 13
+1 26
+1 41
+
+# Very large consumption
+1 1000
+2 5000

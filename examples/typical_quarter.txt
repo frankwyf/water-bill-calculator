@@ -1,0 +1,11 @@
+# Example: a typical quarter with 3 domestic and 2 commercial customers
+# Format: <type> <consumption_m3>
+#   type: 1 = Domestic, 2 = Commercial
+#
+# Usage: ./build/water_bill --batch < examples/typical_quarter.txt
+
+1 8
+1 22
+1 45
+2 60
+2 200
