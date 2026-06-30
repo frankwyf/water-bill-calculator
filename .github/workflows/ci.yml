@@ -30,6 +30,12 @@ jobs:
       - name: Test
         run: make test CC=${{ matrix.compiler }}
 
+      - name: Smoke test (CLI)
+        run: |
+          ./build/water_bill --version
+          ./build/water_bill --help
+          ./build/water_bill --batch < examples/typical_quarter.txt
+
   # ──────────────────────────────────────────────────────────
   # macOS — clang (Xcode)
   # ──────────────────────────────────────────────────────────
@@ -45,6 +51,11 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Smoke test (CLI)
+        run: |
+          ./build/water_bill --version
+          ./build/water_bill --batch < examples/typical_quarter.txt
 
   # ──────────────────────────────────────────────────────────
   # Windows — MinGW-w64 via MSYS2
@@ -73,3 +84,8 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Smoke test (CLI)
+        run: |
+          ./build/water_bill --version
+          ./build/water_bill --batch < examples/typical_quarter.txt
