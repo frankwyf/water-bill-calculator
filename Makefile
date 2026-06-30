@@ -21,6 +21,7 @@ CFLAGS   = -Wall -Wextra -Wpedantic -std=c11
 
 PREFIX  ?= /usr/local
 BINDIR  ?= $(DESTDIR)$(PREFIX)/bin
+MANDIR  ?= $(DESTDIR)$(PREFIX)/share/man/man1
 
 SRCDIR    = src
 TESTDIR   = tests
@@ -30,7 +31,7 @@ SRCS        = $(SRCDIR)/billing.c $(SRCDIR)/statistics.c
 TARGET      = $(BUILDDIR)/water_bill
 TEST_TARGET = $(BUILDDIR)/test_runner
 
-.PHONY: all test debug format install uninstall clean help
+.PHONY: all test check debug format install uninstall clean help
 
 # ── Default ────────────────────────────────────────────────────────────────
 all: $(BUILDDIR) $(TARGET)
@@ -47,7 +48,8 @@ $(TEST_TARGET): $(TESTDIR)/test_all.c $(SRCS) | $(BUILDDIR)
 
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
-
+# Alias: 'make check' is the GNU convention equivalent of 'make test'
+check: test
 # ── Debug / sanitizers ─────────────────────────────────────────────────────
 # Builds the executable with AddressSanitizer and UBSan enabled.
 # Requires gcc >= 4.8 or clang >= 3.1.
@@ -62,9 +64,12 @@ format:
 install: $(TARGET)
 	install -d $(BINDIR)
 	install -m 0755 $(TARGET) $(BINDIR)/water_bill
+	install -d $(MANDIR)
+	install -m 0644 docs/water_bill.1 $(MANDIR)/water_bill.1
 
 uninstall:
 	rm -f $(BINDIR)/water_bill
+	rm -f $(MANDIR)/water_bill.1
 
 # ── Cleanup ────────────────────────────────────────────────────────────────
 clean:
